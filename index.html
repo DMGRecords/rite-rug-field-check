@@ -1,7 +1,105 @@
-# Rite Rug Field Check
-git init
-git add .
-git commit -m "Initial commit for Rite Rug Field Check app"
-git branch -M main
-git remote add origin https://github.com/dmgrecords/rite-rug-field-check.git
-git push -u origin main
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rite Rug Field Check</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { padding: 8px; margin-top: 5px; width: 100%; }
+    .stage-list { margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>Rite Rug Field Check (Local)</h2>
+
+  <label for="subdivision">Subdivision Name</label>
+  <input type="text" id="subdivision" placeholder="Enter subdivision name" />
+
+  <label for="date">Date</label>
+  <input type="date" id="date" />
+
+  <label for="stage">Construction Stage</label>
+  <select id="stage">
+    <option value="Slab">Slab</option>
+    <option value="Crawlspace">Crawlspace</option>
+    <option value="Framing">Framing</option>
+    <option value="Insulation">Insulation</option>
+    <option value="Roofing">Roofing</option>
+    <option value="Drywall">Drywall</option>
+    <option value="Trim">Trim</option>
+    <option value="Paint">Paint</option>
+    <option value="Tile">Tile</option>
+    <option value="Hardwood">Hardwood</option>
+    <option value="LVP">LVP</option>
+    <option value="Vinyl">Vinyl</option>
+    <option value="Carpet">Carpet</option>
+    <option value="Completion">Completion</option>
+  </select>
+
+  <button onclick="addStage()">Add Stage Entry</button>
+
+  <div class="stage-list" id="stageList"></div>
+
+  <label for="email">Send To Email Address</label>
+  <input type="email" id="email" placeholder="example@email.com" />
+
+  <button onclick="submitData()">Submit</button>
+
+  <script>
+    let entries = [];
+
+    function addStage() {
+      const subdivision = document.getElementById('subdivision').value.trim();
+      const date = document.getElementById('date').value;
+      const stage = document.getElementById('stage').value;
+
+      if (!subdivision || !date) {
+        alert('Please enter subdivision name and date.');
+        return;
+      }
+
+      const entry = { subdivision, date, stage };
+      entries.push(entry);
+      saveToLocalStorage();
+      renderList();
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('fieldCheckData', JSON.stringify(entries));
+    }
+
+    function loadFromLocalStorage() {
+      const data = localStorage.getItem('fieldCheckData');
+      if (data) entries = JSON.parse(data);
+      renderList();
+    }
+
+    function renderList() {
+      const container = document.getElementById('stageList');
+      container.innerHTML = '<h4>Stage Entries</h4>' + entries.map((e, i) =>
+        `<div>${i + 1}. <strong>${e.subdivision}</strong> - ${e.stage} (${e.date})</div>`
+      ).join('');
+    }
+
+    function submitData() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert("Enter a valid email address.");
+        return;
+      }
+
+      const body = encodeURIComponent(entries.map(e =>
+        `Subdivision: ${e.subdivision}\nStage: ${e.stage}\nDate: ${e.date}`
+      ).join('\n\n'));
+
+      window.location.href = `mailto:${email}?subject=Rite Rug Field Check Submission&body=${body}`;
+    }
+
+    // Load existing data
+    loadFromLocalStorage();
+  </script>
+
+</body>
+</html>
