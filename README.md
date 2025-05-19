@@ -1,3 +1,7 @@
 # Rite Rug Field Check
-
-Setup and deployment instructions.
+git init
+git add .
+git commit -m "Initial commit for Rite Rug Field Check app"
+git branch -M main
+git remote add origin https://github.comdmgrecords/rite-rug-field-check.git
+git push -u origin main
